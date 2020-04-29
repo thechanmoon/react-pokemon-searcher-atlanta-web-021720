@@ -9,24 +9,33 @@ class PokemonPage extends React.Component {
   {
     pokemonCollection: [],
     searchTerm: '',
-    pokemonFliped: [],
-
   }
   componentDidMount()
   {
     fetch('http://localhost:3000/pokemon')
     .then(res=>res.json())
-    .then(data=>{this.setState({pokemonCollection: data})})
+    .then(data=>{
+      this.setState( {pokemonCollection: data})
+    }
+      
+    )
+  }
+  
+  onChangeSearcherHandler = (event)=>{
+    this.setState({searchTerm: event.target.value})
   }
 
-  flipCard(card)
-  {
-    this.setState({pokemonFliped: [...this.pokemonFliped,card.id]})
-  }
 
-  isCardFliped()
+  renderPokemon()
   {
-    this.state.pokemonFliped.findIndex()
+    // let retVal = <PokemonCollection {...this.state}/>
+    let retVal = this.state.pokemonCollection
+    if(this.state.searchTerm!=='')
+    {
+      // debugger
+      retVal = retVal.filter((pokemon)=>{return pokemon.name.toLowerCase().includes(this.state.searchTerm.toLowerCase())})
+    }
+    return retVal
   }
 
   render() {
@@ -36,9 +45,11 @@ class PokemonPage extends React.Component {
         <br />
         <PokemonForm />
         <br />
-        <Search onChange={() => console.log('🤔')} />
+        {/* <Search onChange={() => console.log('🤔')} /> */}
+        <Search onChange={this.onChangeSearcherHandler} />
+        
         <br />
-        <PokemonCollection {...this.state}/>
+        <PokemonCollection pokemonCollection = {this.renderPokemon()}/>
       </Container>
     )
   }
